@@ -52,10 +52,10 @@ def manual(jump_host, zookeeper_urls, zookeeper_ips, kafka_urls, kafka_ips, sche
     connect_ssh_tunnel_manual(jump_host, zookeeper_ips_urls, zookeeper_port, kafka_ips_urls, kafka_port)
     remove_local_interfaces(instances)
 
-def connect(jump_host, instances, ips_urls):
+def connect(jump_host,instances):
     print_instances(instances)
     add_local_interfaces(instances)
-    connect_ssh_tunnel(jump_host, ips_urls)
+    connect_ssh_tunnel(jump_host,instances)
     remove_local_interfaces(instances)
 
 def add_local_interfaces(instances):
@@ -85,11 +85,10 @@ def print_instances(instances):
             click.echo('{:<10} on {:<15} port {:>5}'.format(i.name,i.ip,i.port))
     click.echo('')
 
-def connect_ssh_tunnel(jump_host, ips_urls):
+def connect_ssh_tunnel(jump_host,instances):
     click.echo(' * connecting to jump host ' + jump_host)
     opts = []
-    
-    for i in ips_urls:
+    for i in instances:
         opts += ['-L','{ip}:{port}:{ip}:{port}'.format(ip=i.ip,port=i.port)]
     subprocess.call(['ssh'] + opts + [jump_host])
 
