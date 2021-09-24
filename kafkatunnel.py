@@ -99,7 +99,7 @@ def connect_ssh_tunnel_manual(jump_host, zookeeper_ips_urls, zookeeper_port, kaf
     for j, k in zookeeper_ips_urls:
         opts += ['-L','{local_ip}:{port}:{remote_ip}:{port}'.format(local_ip=j, remote_ip=k, port=zookeeper_port)]
     
-    for i in kafka_ips_urls:
+    for j, k in kafka_ips_urls:
         opts += ['-L','{local_ip}:{port}:{remote_ip}:{port}'.format(local_ip=j, remote_ip=k, port=kafka_port)]
     subprocess.call(['ssh'] + opts + [jump_host])
 
