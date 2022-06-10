@@ -45,6 +45,8 @@ def aws(jump_host, zookeeper_port, kafka_port, region, profile):
 @click.option("-zp", "--zookeeper_port", default="2181")
 @click.option("-kp", "--kafka_port", default="9092")
 @click.option("-sp", "--schemaregistry_port", default="8081")
+@click.option("-l", "--local_kafka", default="0")
+@click.option("-i", "--interfaces_to", default="add")
 def manual(
     jump_host,
     zookeeper_urls,
@@ -55,6 +57,8 @@ def manual(
     zookeeper_port,
     kafka_port,
     schemaregistry_port,
+    local_kafka,
+    interfaces_to
 ):
     instances = []
     click.echo(" * using manual ip's ...")
@@ -69,18 +73,15 @@ def manual(
     kafka_ips_urls = list(zip(kafka_ips.split(","), kafka_urls.split(",")))
 
     print_instances(instances)
-    add_local_interfaces(instances)
-    connect_ssh_tunnel_manual(
-        jump_host, zookeeper_ips_urls, zookeeper_port, kafka_ips_urls, kafka_port
-    )
-    remove_local_interfaces(instances)
+    if interfaces_to == "add":
+        add_local_interfaces(instances)
+    else:
+        remove_local_interfaces(instances)
 
-
-def connect(jump_host, instances):
-    print_instances(instances)
-    add_local_interfaces(instances)
-    connect_ssh_tunnel(jump_host, instances)
-    remove_local_interfaces(instances)
+    if local_kafka == "0":
+        connect_ssh_tunnel_manual(
+                jump_host, zookeeper_ips_urls, zookeeper_port, kafka_ips_urls, kafka_port
+                )
 
 
 def add_local_interfaces(instances):
